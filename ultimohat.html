@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>Último Hat de Roblox</title>
+</head>
+<body>
+  <h1>Último Hat Publicado</h1>
+  <p id="nombre">Cargando...</p>
+  <p id="creador"></p>
+  <p id="precio"></p>
+  <p id="id"></p>
+  <img id="imagen" width="200" />
+
+  <script>
+    const url = "https://catalog.roblox.com/v1/search/items?category=1&subcategory=2&limit=1&sortType=3";
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (data.data && data.data.length > 0) {
+          const hat = data.data[0];
+          document.getElementById("nombre").innerText = "Nombre: " + hat.name;
+          document.getElementById("creador").innerText = "Creador: " + hat.creatorName;
+          document.getElementById("precio").innerText = "Precio: " + (hat.price || "Gratis");
+          document.getElementById("id").innerText = "ID: " + hat.id;
+          document.getElementById("imagen").src = "https://www.roblox.com/thumbs/catalog/" + hat.id + "/420x420/PNG";
+        } else {
+          document.getElementById("nombre").innerText = "No se encontró ningún hat.";
+        }
+      })
+      .catch(error => {
+        document.getElementById("nombre").innerText = "Error al obtener datos.";
+        console.error(error);
+      });
+  </script>
+</body>
