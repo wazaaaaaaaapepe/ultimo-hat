@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <title>Último Hat Publicado ahora si</title>
@@ -16,19 +17,23 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          const item = data.data[0]; // Obtén el primer item de la lista
-          
-          // Verifica si la propiedad thumbnail y url existen
-          const thumbnailUrl = item.thumbnail && item.thumbnail.url ? item.thumbnail.url : 'https://www.roblox.com/favicon.ico'; // Imagen por defecto si no hay thumbnail
+          // Filtramos solo los items que son UGC
+          const ugcItems = data.data.filter(item => item.creatorType === 'user'); // Aquí verificamos si es UGC
 
-          // Ahora comprobamos si thumbnailUrl no es la URL por defecto antes de mostrarla
-          const hatHtml = `
-            <p><strong>Nombre:</strong> ${item.name}</p>
-            <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
-            <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
-            <img src="${thumbnailUrl}" width="150">
-          `;
-          document.getElementById("hatInfo").innerHTML = hatHtml;
+          if (ugcItems.length > 0) {
+            const item = ugcItems[0]; // Tomamos el primer item UGC
+            const thumbnailUrl = item.thumbnail && item.thumbnail.url ? item.thumbnail.url : 'https://www.roblox.com/favicon.ico'; // Imagen por defecto si no hay thumbnail
+
+            const hatHtml = `
+              <p><strong>Nombre:</strong> ${item.name}</p>
+              <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
+              <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
+              <img src="${thumbnailUrl}" width="150">
+            `;
+            document.getElementById("hatInfo").innerHTML = hatHtml;
+          } else {
+            document.getElementById("hatInfo").innerText = "No se encontraron items UGC";
+          }
         } else {
           throw new Error('No se encontraron datos del sombrero');
         }
