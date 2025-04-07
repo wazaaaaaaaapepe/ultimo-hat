@@ -8,21 +8,31 @@
   <div id="hatInfo">Cargando...</div>
 
   <script>
-    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=1")
-      .then(response => response.json())
+    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=10")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta de la API: ' + response.status);
+        }
+        return response.json();
+      })
       .then(data => {
-        const item = data.data[0];
-        const hatHtml = `
-          <p><strong>Nombre:</strong> ${item.name}</p>
-          <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
-          <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
-          <img src="${item.thumbnail.url}" width="150">
-        `;
-        document.getElementById("hatInfo").innerHTML = hatHtml;
+        if (data.data && data.data.length > 0) {
+          const item = data.data[0]; // Obtén el primer item de la lista
+          const hatHtml = `
+            <p><strong>Nombre:</strong> ${item.name}</p>
+            <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
+            <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
+            <img src="${item.thumbnail.url}" width="150">
+          `;
+          document.getElementById("hatInfo").innerHTML = hatHtml;
+        } else {
+          throw new Error('No se encontraron datos del sombrero');
+        }
       })
       .catch(err => {
-        document.getElementById("hatInfo").innerText = "Error al obtener datos";
+        document.getElementById("hatInfo").innerText = "Error al obtener datos: " + err.message;
         console.error(err);
       });
   </script>
 </body>
+</html>
