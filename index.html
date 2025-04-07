@@ -2,13 +2,15 @@
   fetch("https://catalog.roproxy.com/v1/search/items/details?SortType=3&Limit=10")
     .then(response => response.json())
     .then(data => {
-      let ugcLimited = data.data.filter(item => item.assetType === 8 && item.creatorType === "User"); // Filtrar por UGC creado por usuarios
+      // Filtrar por UGC creado por usuarios y tipo de Asset (8 para accesorios)
+      let ugcLimited = data.data.filter(item => item.assetType === 8 && item.creatorType === "User"); 
+
       if (ugcLimited.length === 0) {
         document.getElementById("hatInfo").innerHTML = "<p>No se encontraron UGC Limiteds. Mostrando el último disponible.</p>";
-        const latestItem = data.data[0];
+        const latestItem = data.data[0]; // Mostrar el primer item disponible, aunque no sea UGC
         displayItem(latestItem);
       } else {
-        const item = ugcLimited[0]; // El primer UGC Limited
+        const item = ugcLimited[0]; // Mostrar el primer UGC Limited encontrado
         displayItem(item);
       }
     })
