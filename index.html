@@ -1,48 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Último UGC Publicado</title>
-</head>
-<body>
-  <h1>Último UGC publicado en Roblox</h1>
-  <div id="hatInfo">Cargando...</div>
+<script>
+  fetch("https://catalog.roproxy.com/v1/search/items/details?SortType=3&Limit=10")
+    .then(response => response.json())
+    .then(data => {
+      let ugcLimited = data.data.filter(item => item.assetType === 8 && item.creatorType === "User"); // Filtrar por UGC creado por usuarios
+      if (ugcLimited.length === 0) {
+        document.getElementById("hatInfo").innerHTML = "<p>No se encontraron UGC Limiteds. Mostrando el último disponible.</p>";
+        const latestItem = data.data[0];
+        displayItem(latestItem);
+      } else {
+        const item = ugcLimited[0]; // El primer UGC Limited
+        displayItem(item);
+      }
+    })
+    .catch(err => {
+      document.getElementById("hatInfo").innerText = "Error al obtener datos";
+      console.error(err);
+    });
 
-  <script>
-    fetch("https://catalog.roproxy.com/v1/search/items/details?SortType=3&Limit=10")  // Consulta más general sin categoría específica
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Error en la respuesta de la API: ' + response.status);
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.data && data.data.length > 0) {
-          // Filtramos los items creados por usuarios
-          const ugcItems = data.data.filter(item => item.creatorType === 'user'); // Confirmamos que el creador es un usuario
-
-          if (ugcItems.length > 0) {
-            // Tomamos el primer item UGC
-            const item = ugcItems[0];
-            const thumbnailUrl = item.thumbnail && item.thumbnail.url ? item.thumbnail.url : 'https://www.roblox.com/favicon.ico'; // Imagen por defecto si no hay thumbnail
-
-            const hatHtml = `
-              <p><strong>Nombre:</strong> ${item.name}</p>
-              <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
-              <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
-              <img src="${thumbnailUrl}" width="150">
-            `;
-            document.getElementById("hatInfo").innerHTML = hatHtml;
-          } else {
-            document.getElementById("hatInfo").innerText = "No se encontraron items UGC disponibles";
-          }
-        } else {
-          throw new Error('No se encontraron datos del sombrero');
-        }
-      })
-      .catch(err => {
-        document.getElementById("hatInfo").innerText = "Error al obtener datos: " + err.message;
-        console.error(err);
-      });
-  </script>
-</body>
-</html>
+  function displayItem(item) {
+    const hatHtml = `
+      <p><strong>Nombre:</strong> ${item.name}</p>
+      <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
+      <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
+      <img src="${item.thumbnail.url}" width="150">
+    `;
+    document.getElementById("hatInfo").innerHTML = hatHtml;
+  }
+</script>
