@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Último Hat Publicado ahora si</title>
+  <title>Último UGC Limited Publicado ahora si</title>
 </head>
 <body>
-  <h1>Último hat publicado en Roblox</h1>
+  <h1>Último UGC Limited publicado en Roblox</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
@@ -17,11 +17,11 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          // Filtramos solo los items que son UGC
-          const ugcItems = data.data.filter(item => item.creatorType === 'user'); // Aquí verificamos si es UGC
+          // Filtramos solo los items que son UGC Limiteds
+          const ugcLimitedItems = data.data.filter(item => item.creatorType === 'user' && item.isLimited === true); // Aquí verificamos si es UGC y Limited
 
-          if (ugcItems.length > 0) {
-            const item = ugcItems[0]; // Tomamos el primer item UGC
+          if (ugcLimitedItems.length > 0) {
+            const item = ugcLimitedItems[0]; // Tomamos el primer item UGC Limited
             const thumbnailUrl = item.thumbnail && item.thumbnail.url ? item.thumbnail.url : 'https://www.roblox.com/favicon.ico'; // Imagen por defecto si no hay thumbnail
 
             const hatHtml = `
@@ -32,7 +32,7 @@
             `;
             document.getElementById("hatInfo").innerHTML = hatHtml;
           } else {
-            document.getElementById("hatInfo").innerText = "No se encontraron items UGC";
+            document.getElementById("hatInfo").innerText = "No se encontraron UGC Limiteds";
           }
         } else {
           throw new Error('No se encontraron datos del sombrero');
