@@ -8,7 +8,7 @@
   <div id="hatInfo">Cargando...</div>
 
   <script>
-    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=10")
+    fetch("https://catalog.roproxy.com/v1/search/items/details?SortType=3&Limit=10")  // Consulta más general sin categoría específica
       .then(response => {
         if (!response.ok) {
           throw new Error('Error en la respuesta de la API: ' + response.status);
@@ -17,8 +17,8 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          // Filtramos solo los items que son UGC (creados por usuarios)
-          const ugcItems = data.data.filter(item => item.creatorType === 'user');
+          // Filtramos los items creados por usuarios
+          const ugcItems = data.data.filter(item => item.creatorType === 'user'); // Confirmamos que el creador es un usuario
 
           if (ugcItems.length > 0) {
             // Tomamos el primer item UGC
