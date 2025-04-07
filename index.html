@@ -18,11 +18,15 @@
       .then(data => {
         if (data.data && data.data.length > 0) {
           const item = data.data[0]; // Obtén el primer item de la lista
+          
+          // Verifica si hay thumbnail antes de acceder a la propiedad 'url'
+          const thumbnailUrl = item.thumbnail && item.thumbnail.url ? item.thumbnail.url : 'https://www.roblox.com/favicon.ico'; // Imagen por defecto si no hay thumbnail
+
           const hatHtml = `
             <p><strong>Nombre:</strong> ${item.name}</p>
             <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
             <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
-            <img src="${item.thumbnail.url}" width="150">
+            <img src="${thumbnailUrl}" width="150">
           `;
           document.getElementById("hatInfo").innerHTML = hatHtml;
         } else {
