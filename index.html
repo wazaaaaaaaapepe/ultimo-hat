@@ -17,8 +17,8 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          // Filtrar los ítems que tienen collectibleItemId, que son Limiteds de Roblox o UGC Limiteds
-          const limitedItems = data.data.filter(item => item.collectibleItemId && item.price !== undefined);
+          // Filtrar los ítems que tienen collectibleItemId y un precio mayor a 0
+          const limitedItems = data.data.filter(item => item.collectibleItemId && item.price > 0);
 
           if (limitedItems.length === 0) {
             throw new Error("No se encontraron Limiteds recientemente.");
