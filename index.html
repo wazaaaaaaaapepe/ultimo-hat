@@ -4,7 +4,7 @@
   <title>Último Hat Publicado ahora sí</title>
 </head>
 <body>
-  <h1>Último Hat LIMITED PUBLICADO Y REVENDIBLE en Roblox</h1>
+  <h1>Último Hat LIMITED de Roblox publicado</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
@@ -17,17 +17,17 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          // Filtrar solo los ítems que son Limiteds y pueden ser revendidos
-          const revitableLimiteds = data.data.filter(item => {
-            // El ítem debe tener un ID coleccionable y un precio mayor que 500 Robux (precios típicos de Limiteds)
+          // Filtrar solo los Limiteds de Roblox, que tienen collectibleItemId
+          const limitedItems = data.data.filter(item => {
+            // Filtrar solo los ítems que son de Roblox (con collectibleItemId) y un precio alto
             return item.collectibleItemId && item.price && item.price > 500;
           });
 
-          if (revitableLimiteds.length === 0) {
-            throw new Error("No se encontraron Limiteds revendibles recientemente.");
+          if (limitedItems.length === 0) {
+            throw new Error("No se encontraron Limiteds de Roblox recientemente.");
           }
 
-          const item = revitableLimiteds[0]; // El más reciente Limited
+          const item = limitedItems[0]; // El más reciente Limited de Roblox
           
           const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
 
