@@ -17,8 +17,8 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          // Filtrar los ítems que tienen collectibleItemId y un precio mayor a 0
-          const limitedItems = data.data.filter(item => item.collectibleItemId && item.price > 0);
+          // Filtrar los ítems que tienen collectibleItemId (solo Limiteds)
+          const limitedItems = data.data.filter(item => item.collectibleItemId);
 
           if (limitedItems.length === 0) {
             throw new Error("No se encontraron Limiteds recientemente.");
@@ -26,12 +26,7 @@
 
           const item = limitedItems[0]; // El más reciente Limited
           
-          // Verificamos que el item tenga un id antes de acceder a él
-          if (!item.id) {
-            throw new Error("El ítem no tiene un ID válido.");
-          }
-
-          // Comprobar si tiene una imagen
+          // Comprobar si tiene una imagen de thumbnail
           const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
 
           // Si no tiene precio asignado, poner "Gratis"
