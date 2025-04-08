@@ -4,7 +4,7 @@
   <title>Último Hat Publicado ahora sí</title>
 </head>
 <body>
-  <h1>Último hat LIMITED publicado en Roblox</h1>
+  <h1>Último hat LIMITED publicado en Roblox (incluyendo UGC)</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
@@ -17,8 +17,11 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          // Filtrar solo los ítems que son Limited
-          const limitedItems = data.data.filter(item => item.collectibleItemId);
+          // Filtrar solo los ítems que son Limiteds (con precio y no gratuitos)
+          const limitedItems = data.data.filter(item => {
+            // Considerar solo ítems con precio y que no sean gratuitos (un valor más alto es común en Limiteds)
+            return item.price && item.price > 0;
+          });
 
           if (limitedItems.length === 0) {
             throw new Error("No se encontraron Limiteds recientemente.");
