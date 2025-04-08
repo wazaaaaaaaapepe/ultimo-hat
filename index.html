@@ -26,6 +26,11 @@
 
           const item = limitedItems[0]; // El más reciente Limited
           
+          // Verificamos que el item tenga un id antes de acceder a él
+          if (!item.id) {
+            throw new Error("El ítem no tiene un ID válido.");
+          }
+
           // Comprobar si tiene una imagen
           const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
 
