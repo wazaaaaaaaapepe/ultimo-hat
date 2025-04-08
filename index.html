@@ -1,39 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Últimos Hats LIMITED publicados</title>
+  <title>Últimos Limiteds de Rolimons</title>
 </head>
 <body>
-  <h1>Últimos hats LIMITED publicados en Roblox</h1>
+  <h1>Últimos Limiteds según Rolimons</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
-    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=100")
+    fetch("https://www.rolimons.com/itemapi/itemdetails")
       .then(response => {
-        if (!response.ok) throw new Error('Error en la respuesta de la API: ' + response.status);
+        if (!response.ok) throw new Error("Error en la API de Rolimons");
         return response.json();
       })
       .then(data => {
-        if (!data.data || data.data.length === 0) throw new Error('No se encontraron accesorios');
+        const items = data.items;
 
-        // Filtrar los que son Limited o Limited Unique
-        const limiteds = data.data.filter(item => item.isLimited || item.isLimitedUnique);
+        // Convertimos los items a un array con sus IDs
+        const itemArray = Object.entries(items).map(([id, info]) => ({
+          id,
+          name: info[0],
+          value: info[1],
+          rap: info[2],
+          demand: info[3],
+          trend: info[4],
+          collectible: info[8] // true si es Limited
+        }));
 
-        if (limiteds.length === 0) {
-          document.getElementById("hatInfo").innerText = "No se encontraron accesorios Limited recientemente.";
-          return;
-        }
+        // Filtrar solo Limiteds
+        const limiteds = itemArray.filter(item => item.collectible);
 
-        // Mostrar hasta los 5 más recientes
-        const html = limiteds.slice(0, 5).map(hat => {
-          const thumbnail = hat.thumbnail?.url || "https://www.roblox.com/favicon.ico";
+        // Ordenar por ID descendente (para mostrar los más nuevos)
+        limiteds.sort((a, b) => Number(b.id) - Number(a.id));
+
+        // Mostrar los 5 primeros
+        const html = limiteds.slice(0, 5).map(item => {
           return `
             <div style="margin-bottom: 20px;">
-              <p><strong>Nombre:</strong> ${hat.name}</p>
-              <p><strong>Precio:</strong> ${hat.price || "Gratis"}</p>
-              <p><strong>Tipo:</strong> ${hat.isLimitedUnique ? "Limited Unique" : "Limited"}</p>
-              <p><a href="https://www.roblox.com/catalog/${hat.id}" target="_blank">Ver en Roblox</a></p>
-              <img src="${thumbnail}" width="150">
+              <p><strong>Nombre:</strong> ${item.name}</p>
+              <p><strong>Valor estimado:</strong> ${item.value || "Desconocido"}</p>
+              <p><strong>RAP:</strong> ${item.rap}</p>
+              <p><strong>Demanda:</strong> ${item.demand || "?"}</p>
+              <p><strong>Tendencia:</strong> ${item.trend || "?"}</p>
+              <p><a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
+              <img src="https://www.roblox.com/asset-thumbnail/image?assetId=${item.id}&width=150&height=150&format=png">
             </div>
           `;
         }).join("");
