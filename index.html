@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Último Hat Limited Publicado</title>
+  <title>Último Hat LIMITED Publicado</title>
 </head>
 <body>
   <h1>Último hat LIMITED publicado en Roblox</h1>
@@ -10,41 +10,36 @@
   <script>
     fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=30")
       .then(response => {
-        if (!response.ok) {
-          throw new Error('Error en la respuesta de la API: ' + response.status);
-        }
+        if (!response.ok) throw new Error('Error en la respuesta de la API: ' + response.status);
         return response.json();
       })
       .then(data => {
-        if (data.data && data.data.length > 0) {
-          // Filtramos solo los items que son Limited o Limited Unique
-          const limitedItems = data.data.filter(item => item.isLimited || item.isLimitedUnique);
+        if (!data.data || data.data.length === 0) throw new Error('No se encontraron accesorios');
 
-          if (limitedItems.length === 0) {
-            document.getElementById("hatInfo").innerText = "No se encontraron Limiteds recientemente.";
-            return;
-          }
+        // Filtrar solo los que son Limited o Limited Unique
+        const limiteds = data.data.filter(item => item.isLimited || item.isLimitedUnique);
 
-          const item = limitedItems[0]; // El primer Limited reciente
-
-          const thumbnailUrl = item.thumbnail && item.thumbnail.url ? item.thumbnail.url : 'https://www.roblox.com/favicon.ico';
-
-          const hatHtml = `
-            <p><strong>Nombre:</strong> ${item.name}</p>
-            <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
-            <p><strong>Tipo de Limited:</strong> ${item.isLimitedUnique ? "Limited Unique" : "Limited"}</p>
-            <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
-            <img src="${thumbnailUrl}" width="150">
-          `;
-          document.getElementById("hatInfo").innerHTML = hatHtml;
-        } else {
-          throw new Error('No se encontraron datos del sombrero');
+        if (limiteds.length === 0) {
+          document.getElementById("hatInfo").innerText = "No se encontraron accesorios Limited recientemente.";
+          return;
         }
+
+        const hat = limiteds[0]; // El primero de los Limited encontrados
+        const thumbnail = hat.thumbnail?.url || "https://www.roblox.com/favicon.ico";
+
+        const html = `
+          <p><strong>Nombre:</strong> ${hat.name}</p>
+          <p><strong>Precio:</strong> ${hat.price || "Gratis"}</p>
+          <p><strong>Tipo:</strong> ${hat.isLimitedUnique ? "Limited Unique" : "Limited"}</p>
+          <p><a href="https://www.roblox.com/catalog/${hat.id}" target="_blank">Ver en Roblox</a></p>
+          <img src="${thumbnail}" width="150">
+        `;
+
+        document.getElementById("hatInfo").innerHTML = html;
       })
-      .catch(err => {
-        document.getElementById("hatInfo").innerText = "Error al obtener datos: " + err.message;
-        console.error(err);
+      .catch(error => {
+        document.getElementById("hatInfo").innerText = "Error: " + error.message;
+        console.error(error);
       });
   </script>
 </body>
-</html>
