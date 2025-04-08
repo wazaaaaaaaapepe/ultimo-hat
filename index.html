@@ -8,7 +8,7 @@
   <div id="hatInfo">Cargando...</div>
 
   <script>
-    fetch("https://corsproxy.io/?https://www.rolimons.com/itemapi/itemdetails")
+    fetch("https://api.allorigins.win/raw?url=https://www.rolimons.com/itemapi/itemdetails")
       .then(response => {
         if (!response.ok) throw new Error("Error en la API de Rolimons: " + response.status);
         return response.json();
