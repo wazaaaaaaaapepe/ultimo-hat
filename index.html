@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Último Hat Publicado ahora si</title>
+  <title>Último Hat Limited Publicado</title>
 </head>
 <body>
-  <h1>Último hat publicado en Roblox</h1>
+  <h1>Último hat LIMITED publicado en Roblox</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
-    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=10")
+    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=30")
       .then(response => {
         if (!response.ok) {
           throw new Error('Error en la respuesta de la API: ' + response.status);
@@ -17,15 +17,22 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          const item = data.data[0]; // Obtén el primer item de la lista
-          
-          // Verifica si la propiedad thumbnail y url existen
-          const thumbnailUrl = item.thumbnail && item.thumbnail.url ? item.thumbnail.url : 'https://www.roblox.com/favicon.ico'; // Imagen por defecto si no hay thumbnail
+          // Filtramos solo los items que son Limited o Limited Unique
+          const limitedItems = data.data.filter(item => item.isLimited || item.isLimitedUnique);
 
-          // Ahora comprobamos si thumbnailUrl no es la URL por defecto antes de mostrarla
+          if (limitedItems.length === 0) {
+            document.getElementById("hatInfo").innerText = "No se encontraron Limiteds recientemente.";
+            return;
+          }
+
+          const item = limitedItems[0]; // El primer Limited reciente
+
+          const thumbnailUrl = item.thumbnail && item.thumbnail.url ? item.thumbnail.url : 'https://www.roblox.com/favicon.ico';
+
           const hatHtml = `
             <p><strong>Nombre:</strong> ${item.name}</p>
             <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
+            <p><strong>Tipo de Limited:</strong> ${item.isLimitedUnique ? "Limited Unique" : "Limited"}</p>
             <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
             <img src="${thumbnailUrl}" width="150">
           `;
