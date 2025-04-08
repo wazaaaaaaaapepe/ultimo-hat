@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Último Hat LIMITED en Roblox</title>
+  <title>Último Hat PUBLICADO Limited en Roblox</title>
 </head>
 <body>
-  <h1>Último Hat LIMITED (Roblox o UGC Limited) publicado</h1>
+  <h1>Último Hat LIMITED publicado en Roblox (incluyendo UGC Limiteds)</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
@@ -17,31 +17,20 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          console.log(data.data); // Depuración para ver todos los ítems
-
-          // Filtrar solo los Limiteds auténticos, tanto de Roblox como UGC
-          const limitedItems = data.data.filter(item => {
-            console.log(`Analizando item: ${item.name}, Creator ID: ${item.creator.id}, Collectible: ${item.collectibleItemId}, Precio: ${item.price}`); // Ver el estado del item
-            // Verificamos que el ítem tenga un collectibleItemId (es un Limited) y un precio mayor a 500 Robux
-            const isRobloxCreator = item.creator.id === 1; // Creador es Roblox
-            const isLimitedUGC = item.collectibleItemId && item.price > 500; // UGC Limiteds con precio mayor a 500
-
-            return (isRobloxCreator || isLimitedUGC); // Solo mostrar si es un Limited de Roblox o un UGC Limited válido
-          });
-
-          console.log(`Ítems filtrados: ${limitedItems.length}`); // Ver cuántos ítems fueron filtrados como Limiteds
+          // Filtrar los ítems que tienen collectibleItemId, que son Limiteds de Roblox o UGC Limiteds
+          const limitedItems = data.data.filter(item => item.collectibleItemId && item.price !== undefined);
 
           if (limitedItems.length === 0) {
             throw new Error("No se encontraron Limiteds recientemente.");
           }
 
-          const item = limitedItems[0]; // El más reciente Limited (puede ser de Roblox o UGC)
+          const item = limitedItems[0]; // El más reciente Limited
           
-          // Asegurarnos de que tenga una imagen
+          // Comprobar si tiene una imagen
           const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
 
-          // Verificamos si tiene un precio válido
-          const price = item.price ? item.price : "Precio no disponible";
+          // Si no tiene precio asignado, poner "Gratis"
+          const price = item.price ? item.price : "Gratis";
 
           const hatHtml = `
             <p><strong>Nombre:</strong> ${item.name}</p>
