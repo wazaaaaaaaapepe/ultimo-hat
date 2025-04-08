@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Último Hat Publicado ahora sí</title>
+  <title>Último Hat Limited en Roblox</title>
 </head>
 <body>
-  <h1>Último Hat LIMITED de Roblox publicado</h1>
+  <h1>Último Hat LIMITED (Roblox o UGC Limited) publicado</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
@@ -17,17 +17,17 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          // Filtrar solo los Limiteds de Roblox, que tienen collectibleItemId
+          // Filtrar solo los Limiteds auténticos, tanto de Roblox como UGC
           const limitedItems = data.data.filter(item => {
-            // Filtrar solo los ítems que son de Roblox (con collectibleItemId) y un precio alto
+            // Verificamos que el ítem tenga un collectibleItemId (es un Limited) y un precio mayor a 500 Robux
             return item.collectibleItemId && item.price && item.price > 500;
           });
 
           if (limitedItems.length === 0) {
-            throw new Error("No se encontraron Limiteds de Roblox recientemente.");
+            throw new Error("No se encontraron Limiteds recientemente.");
           }
 
-          const item = limitedItems[0]; // El más reciente Limited de Roblox
+          const item = limitedItems[0]; // El más reciente Limited (puede ser de Roblox o UGC)
           
           const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
 
