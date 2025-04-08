@@ -17,15 +17,19 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
+          console.log(data.data); // Depuración para ver todos los ítems
+
           // Filtrar solo los Limiteds auténticos, tanto de Roblox como UGC
           const limitedItems = data.data.filter(item => {
+            console.log(`Analizando item: ${item.name}, Creator ID: ${item.creator.id}, Collectible: ${item.collectibleItemId}, Precio: ${item.price}`); // Ver el estado del item
             // Verificamos que el ítem tenga un collectibleItemId (es un Limited) y un precio mayor a 500 Robux
-            // También verificamos que el creador sea Roblox o sea un UGC Limited (con precio adecuado)
             const isRobloxCreator = item.creator.id === 1; // Creador es Roblox
             const isLimitedUGC = item.collectibleItemId && item.price > 500; // UGC Limiteds con precio mayor a 500
 
             return (isRobloxCreator || isLimitedUGC); // Solo mostrar si es un Limited de Roblox o un UGC Limited válido
           });
+
+          console.log(`Ítems filtrados: ${limitedItems.length}`); // Ver cuántos ítems fueron filtrados como Limiteds
 
           if (limitedItems.length === 0) {
             throw new Error("No se encontraron Limiteds recientemente.");
