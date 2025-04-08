@@ -1,53 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Últimos Limiteds de Rolimons</title>
+  <title>Último Hat Publicado ahora sí</title>
 </head>
 <body>
-  <h1>Últimos Limiteds según Rolimons</h1>
+  <h1>Último hat LIMITED publicado en Roblox</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
-    fetch("https://api.allorigins.win/raw?url=https://www.rolimons.com/itemapi/itemdetails")
+    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=30")
       .then(response => {
-        if (!response.ok) throw new Error("Error en la API de Rolimons: " + response.status);
+        if (!response.ok) {
+          throw new Error('Error en la respuesta de la API: ' + response.status);
+        }
         return response.json();
       })
       .then(data => {
-        const items = data.items;
+        if (data.data && data.data.length > 0) {
+          // Filtrar solo los ítems que son Limited
+          const limitedItems = data.data.filter(item => item.collectibleItemId);
 
-        const itemArray = Object.entries(items).map(([id, info]) => ({
-          id,
-          name: info[0],
-          value: info[1],
-          rap: info[2],
-          demand: info[3],
-          trend: info[4],
-          collectible: info[8]
-        }));
+          if (limitedItems.length === 0) {
+            throw new Error("No se encontraron Limiteds recientemente.");
+          }
 
-        const limiteds = itemArray.filter(item => item.collectible);
-        limiteds.sort((a, b) => Number(b.id) - Number(a.id));
+          const item = limitedItems[0]; // El más reciente Limited
+          
+          const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
 
-        const html = limiteds.slice(0, 5).map(item => {
-          return `
-            <div style="margin-bottom: 20px;">
-              <p><strong>Nombre:</strong> ${item.name}</p>
-              <p><strong>Valor estimado:</strong> ${item.value || "Desconocido"}</p>
-              <p><strong>RAP:</strong> ${item.rap}</p>
-              <p><strong>Demanda:</strong> ${item.demand || "?"}</p>
-              <p><strong>Tendencia:</strong> ${item.trend || "?"}</p>
-              <p><a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
-              <img src="https://www.roblox.com/asset-thumbnail/image?assetId=${item.id}&width=150&height=150&format=png">
-            </div>
+          const hatHtml = `
+            <p><strong>Nombre:</strong> ${item.name}</p>
+            <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
+            <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
+            <img src="${thumbnailUrl}" width="150">
           `;
-        }).join("");
-
-        document.getElementById("hatInfo").innerHTML = html;
+          document.getElementById("hatInfo").innerHTML = hatHtml;
+        } else {
+          throw new Error('No se encontraron datos del sombrero');
+        }
       })
-      .catch(error => {
-        document.getElementById("hatInfo").innerText = "Error: " + error.message;
-        console.error(error);
+      .catch(err => {
+        document.getElementById("hatInfo").innerText = "Error al obtener datos: " + err.message;
+        console.error(err);
       });
   </script>
 </body>
