@@ -29,11 +29,15 @@
 
           const item = limitedItems[0]; // El más reciente Limited (puede ser de Roblox o UGC)
           
+          // Asegurarnos de que tenga una imagen
           const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
+
+          // Verificamos si tiene un precio válido
+          const price = item.price ? item.price : "Precio no disponible";
 
           const hatHtml = `
             <p><strong>Nombre:</strong> ${item.name}</p>
-            <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
+            <p><strong>Precio:</strong> ${price}</p>
             <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
             <img src="${thumbnailUrl}" width="150">
           `;
