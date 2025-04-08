@@ -8,15 +8,14 @@
   <div id="hatInfo">Cargando...</div>
 
   <script>
-    fetch("https://www.rolimons.com/itemapi/itemdetails")
+    fetch("https://corsproxy.io/?https://www.rolimons.com/itemapi/itemdetails")
       .then(response => {
-        if (!response.ok) throw new Error("Error en la API de Rolimons");
+        if (!response.ok) throw new Error("Error en la API de Rolimons: " + response.status);
         return response.json();
       })
       .then(data => {
         const items = data.items;
 
-        // Convertimos los items a un array con sus IDs
         const itemArray = Object.entries(items).map(([id, info]) => ({
           id,
           name: info[0],
@@ -24,16 +23,12 @@
           rap: info[2],
           demand: info[3],
           trend: info[4],
-          collectible: info[8] // true si es Limited
+          collectible: info[8]
         }));
 
-        // Filtrar solo Limiteds
         const limiteds = itemArray.filter(item => item.collectible);
-
-        // Ordenar por ID descendente (para mostrar los más nuevos)
         limiteds.sort((a, b) => Number(b.id) - Number(a.id));
 
-        // Mostrar los 5 primeros
         const html = limiteds.slice(0, 5).map(item => {
           return `
             <div style="margin-bottom: 20px;">
