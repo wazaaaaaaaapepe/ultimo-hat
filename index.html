@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Último Hat LIMITED Publicado</title>
+  <title>Últimos Hats LIMITED publicados</title>
 </head>
 <body>
-  <h1>Último hat LIMITED publicado en Roblox</h1>
+  <h1>Últimos hats LIMITED publicados en Roblox</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
-    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=30")
+    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=100")
       .then(response => {
         if (!response.ok) throw new Error('Error en la respuesta de la API: ' + response.status);
         return response.json();
@@ -16,7 +16,7 @@
       .then(data => {
         if (!data.data || data.data.length === 0) throw new Error('No se encontraron accesorios');
 
-        // Filtrar solo los que son Limited o Limited Unique
+        // Filtrar los que son Limited o Limited Unique
         const limiteds = data.data.filter(item => item.isLimited || item.isLimitedUnique);
 
         if (limiteds.length === 0) {
@@ -24,16 +24,19 @@
           return;
         }
 
-        const hat = limiteds[0]; // El primero de los Limited encontrados
-        const thumbnail = hat.thumbnail?.url || "https://www.roblox.com/favicon.ico";
-
-        const html = `
-          <p><strong>Nombre:</strong> ${hat.name}</p>
-          <p><strong>Precio:</strong> ${hat.price || "Gratis"}</p>
-          <p><strong>Tipo:</strong> ${hat.isLimitedUnique ? "Limited Unique" : "Limited"}</p>
-          <p><a href="https://www.roblox.com/catalog/${hat.id}" target="_blank">Ver en Roblox</a></p>
-          <img src="${thumbnail}" width="150">
-        `;
+        // Mostrar hasta los 5 más recientes
+        const html = limiteds.slice(0, 5).map(hat => {
+          const thumbnail = hat.thumbnail?.url || "https://www.roblox.com/favicon.ico";
+          return `
+            <div style="margin-bottom: 20px;">
+              <p><strong>Nombre:</strong> ${hat.name}</p>
+              <p><strong>Precio:</strong> ${hat.price || "Gratis"}</p>
+              <p><strong>Tipo:</strong> ${hat.isLimitedUnique ? "Limited Unique" : "Limited"}</p>
+              <p><a href="https://www.roblox.com/catalog/${hat.id}" target="_blank">Ver en Roblox</a></p>
+              <img src="${thumbnail}" width="150">
+            </div>
+          `;
+        }).join("");
 
         document.getElementById("hatInfo").innerHTML = html;
       })
@@ -43,3 +46,4 @@
       });
   </script>
 </body>
+</html>
