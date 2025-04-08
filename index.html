@@ -4,7 +4,7 @@
   <title>Último Hat Publicado ahora sí</title>
 </head>
 <body>
-  <h1>Último hat LIMITED publicado en Roblox (incluyendo UGC)</h1>
+  <h1>Último Hat LIMITED publicado en Roblox (incluyendo UGC)</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
@@ -17,10 +17,11 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          // Filtrar solo los ítems que son Limiteds (con precio y no gratuitos)
+          // Filtrar solo los ítems que son Limiteds
           const limitedItems = data.data.filter(item => {
-            // Considerar solo ítems con precio y que no sean gratuitos (un valor más alto es común en Limiteds)
-            return item.price && item.price > 0;
+            // Asegurarnos de que tenga un precio mayor a 500 (o un valor significativo para Limiteds)
+            // Además, debe ser coleccionable o tener un ID de coleccionable
+            return item.price && item.price > 500 && item.collectibleItemId;
           });
 
           if (limitedItems.length === 0) {
