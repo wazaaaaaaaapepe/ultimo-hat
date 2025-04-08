@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Último Hat Limited en Roblox</title>
+  <title>Último Hat LIMITED en Roblox</title>
 </head>
 <body>
   <h1>Último Hat LIMITED (Roblox o UGC Limited) publicado</h1>
@@ -20,7 +20,11 @@
           // Filtrar solo los Limiteds auténticos, tanto de Roblox como UGC
           const limitedItems = data.data.filter(item => {
             // Verificamos que el ítem tenga un collectibleItemId (es un Limited) y un precio mayor a 500 Robux
-            return item.collectibleItemId && item.price && item.price > 500;
+            // También verificamos que el creador sea Roblox o sea un UGC Limited (con precio adecuado)
+            const isRobloxCreator = item.creator.id === 1; // Creador es Roblox
+            const isLimitedUGC = item.collectibleItemId && item.price > 500; // UGC Limiteds con precio mayor a 500
+
+            return (isRobloxCreator || isLimitedUGC); // Solo mostrar si es un Limited de Roblox o un UGC Limited válido
           });
 
           if (limitedItems.length === 0) {
