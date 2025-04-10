@@ -8,16 +8,15 @@
   <div id="limitedList">Cargando datos desde Rolimons...</div>
 
   <script>
-    // Cargar la info de los limiteds
     fetch("https://www.rolimons.com/itemapi/itemdetails")
       .then(response => response.json())
       .then(data => {
         const items = data.items;
-        const keys = Object.keys(items).slice(0, 10); // Mostramos los 10 primeros
+        const itemIds = Object.keys(items).slice(0, 10); // Mostrar solo los primeros 10
 
         let html = "";
 
-        keys.forEach(id => {
+        itemIds.forEach(id => {
           const item = items[id];
           const name = item[0];
           const rap = item[1];
@@ -29,11 +28,12 @@
           html += `
             <div style="margin-bottom: 20px;">
               <p><strong>🧢 Nombre:</strong> ${name}</p>
-              <p><strong>💰 Valor:</strong> ${value || "Desconocido"}</p>
-              <p><strong>📈 RAP:</strong> ${rap || "Desconocido"}</p>
+              <p><strong>💰 Valor:</strong> ${value || "N/A"}</p>
+              <p><strong>📈 RAP:</strong> ${rap || "N/A"}</p>
               <p><strong>🔥 Demanda:</strong> ${demand}</p>
               <p><strong>🌟 Rareza:</strong> ${rarity}</p>
               <p><strong>📊 Tendencia:</strong> ${trend}</p>
+              <p><a href="https://www.roblox.com/catalog/${id}" target="_blank">Ver en Roblox</a></p>
               <hr>
             </div>
           `;
@@ -43,6 +43,7 @@
       })
       .catch(err => {
         document.getElementById("limitedList").innerText = "Error al cargar datos: " + err;
+        console.error(err);
       });
   </script>
 </body>
