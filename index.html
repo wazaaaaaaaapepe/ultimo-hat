@@ -1,38 +1,51 @@
-<script>
-  fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=30&SalesTypeFilter=1")
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Error en la respuesta de la API: ' + response.status);
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data.data && data.data.length > 0) {
-        // Filtra: que sean limiteds (tienen collectibleItemId) y que no sean de Roblox
-        const limitedUGC = data.data.filter(item =>
-          item.collectibleItemId && item.creator.name.toLowerCase() !== "roblox"
-        );
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Último UGC Limited Gratis</title>
+</head>
+<body>
+  <h1>Último UGC LIMITED Gratis publicado en Roblox</h1>
+  <div id="hatInfo">Cargando...</div>
 
-        if (limitedUGC.length === 0) {
-          throw new Error("No se encontraron Limiteds gratuitos de UGC recientemente.");
+  <script>
+    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=30&SalesTypeFilter=1")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta de la API: ' + response.status);
         }
+        return response.json();
+      })
+      .then(data => {
+        if (data.data && data.data.length > 0) {
+          // Filtrar por: que tenga collectibleItemId (es limited), que no sea de Roblox (UGC), y que el precio sea 0 (gratis)
+          const ugcLimitedGratis = data.data.filter(item =>
+            item.collectibleItemId &&
+            item.creator.name.toLowerCase() !== "roblox" &&
+            item.price === 0
+          );
 
-        const item = limitedUGC[0]; // El primero encontrado
-        const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
+          if (ugcLimitedGratis.length === 0) {
+            throw new Error("No se encontraron UGC Limiteds gratis recientemente.");
+          }
 
-        const hatHtml = `
-          <p><strong>Nombre:</strong> ${item.name}</p>
-          <p><strong>Precio:</strong> Gratis</p>
-          <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
-          <img src="${thumbnailUrl}" width="150">
-        `;
-        document.getElementById("hatInfo").innerHTML = hatHtml;
-      } else {
-        throw new Error('No se encontraron datos del sombrero');
-      }
-    })
-    .catch(err => {
-      document.getElementById("hatInfo").innerText = "Error al obtener datos: " + err.message;
-      console.error(err);
-    });
-</script>
+          const item = ugcLimitedGratis[0]; // El primero que cumpla todo
+          const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
+
+          const hatHtml = `
+            <p><strong>Nombre:</strong> ${item.name}</p>
+            <p><strong>Precio:</strong> Gratis</p>
+            <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
+            <img src="${thumbnailUrl}" width="150">
+          `;
+          document.getElementById("hatInfo").innerHTML = hatHtml;
+        } else {
+          throw new Error('No se encontraron datos del sombrero');
+        }
+      })
+      .catch(err => {
+        document.getElementById("hatInfo").innerText = "Error al obtener datos: " + err.message;
+        console.error(err);
+      });
+  </script>
+</body>
+</html>
