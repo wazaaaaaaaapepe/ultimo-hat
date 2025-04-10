@@ -1,48 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Últimos Limiteds de Rolimons</title>
+  <title>Últimos UGC Limiteds Gratuitos</title>
 </head>
 <body>
-  <h1>Algunos Limiteds (según Rolimons)</h1>
-  <div id="limitedList">Cargando datos desde Rolimons...</div>
+  <h1>Últimos UGC Limiteds Gratuitos en Roblox</h1>
+  <div id="itemList">Cargando...</div>
 
   <script>
-    fetch("https://www.rolimons.com/itemapi/itemdetails")
-      .then(response => response.json())
+    // Definir la URL de la API con los parámetros necesarios
+    const apiUrl = "https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=30&SalesTypeFilter=1";
+
+    // Realizar la solicitud a la API
+    fetch(apiUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta de la API: ' + response.status);
+        }
+        return response.json();
+      })
       .then(data => {
-        const items = data.items;
-        const itemIds = Object.keys(items).slice(0, 10); // Mostrar solo los primeros 10
+        if (data.data && data.data.length > 0) {
+          // Filtrar los ítems que son UGC Limited y gratuitos
+          const ugcLimitedsGratis = data.data.filter(item =>
+            item.collectibleItemId && // Es Limited
+            item.creator.hasVerifiedBadge === false && // No es de Roblox
+            item.price === 0 // Es gratuito
+          );
 
-        let html = "";
+          if (ugcLimitedsGratis.length === 0) {
+            throw new Error("No se encontraron UGC Limiteds gratuitos recientemente.");
+          }
 
-        itemIds.forEach(id => {
-          const item = items[id];
-          const name = item[0];
-          const rap = item[1];
-          const value = item[2];
-          const demand = item[3];
-          const rarity = item[4];
-          const trend = item[5];
+          // Construir el HTML para mostrar los ítems
+          let htmlContent = "";
+          ugcLimitedsGratis.forEach(item => {
+            const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
+            htmlContent += `
+              <div style="margin-bottom: 20px;">
+                <p><strong>Nombre:</strong> ${item.name}</p>
+                <p><strong>Precio:</strong> Gratis</p>
+                <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
+                <img src="${thumbnailUrl}" width="150">
+                <hr>
+              </div>
+            `;
+          });
 
-          html += `
-            <div style="margin-bottom: 20px;">
-              <p><strong>🧢 Nombre:</strong> ${name}</p>
-              <p><strong>💰 Valor:</strong> ${value || "N/A"}</p>
-              <p><strong>📈 RAP:</strong> ${rap || "N/A"}</p>
-              <p><strong>🔥 Demanda:</strong> ${demand}</p>
-              <p><strong>🌟 Rareza:</strong> ${rarity}</p>
-              <p><strong>📊 Tendencia:</strong> ${trend}</p>
-              <p><a href="https://www.roblox.com/catalog/${id}" target="_blank">Ver en Roblox</a></p>
-              <hr>
-            </div>
-          `;
-        });
-
-        document.getElementById("limitedList").innerHTML = html;
+          document.getElementById("itemList").innerHTML = htmlContent;
+        } else {
+          throw new Error('No se encontraron datos de ítems');
+        }
       })
       .catch(err => {
-        document.getElementById("limitedList").innerText = "Error al cargar datos: " + err;
+        document.getElementById("itemList").innerText = "Error al obtener datos: " + err.message;
         console.error(err);
       });
   </script>
