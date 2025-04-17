@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Último Hat LIMITED publicado en Roblox</title>
+  <title>Último Hat Publicado ahora si</title>
 </head>
 <body>
-  <h1>Último Hat LIMITED publicado en Roblox</h1>
+  <h1>Último hat publicado en Roblox</h1>
   <div id="hatInfo">Cargando...</div>
 
   <script>
-    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=30")
+    fetch("https://catalog.roproxy.com/v1/search/items/details?Category=11&SortType=3&Limit=10")
       .then(response => {
         if (!response.ok) {
           throw new Error('Error en la respuesta de la API: ' + response.status);
@@ -19,23 +17,18 @@
       })
       .then(data => {
         if (data.data && data.data.length > 0) {
-          // Filtrar solo los artículos UGC que son limitados
-          const limitedItems = data.data.filter(item => item.collectibleItemId && item.creator.name !== "Roblox");
-
-          if (limitedItems.length === 0) {
-            throw new Error("No se encontraron UGC Limiteds.");
-          }
-
-          const item = limitedItems[0]; // El más reciente Limited
+          const item = data.data[0]; // Obtén el primer item de la lista
           
-          const thumbnailUrl = item.thumbnail?.url || 'https://www.roblox.com/favicon.ico';
+          // Verifica si la propiedad thumbnail y url existen
+          const thumbnailUrl = item.thumbnail && item.thumbnail.url ? item.thumbnail.url : 'https://www.roblox.com/favicon.ico'; // Imagen por defecto si no hay thumbnail
 
-          const hatHtml = `
+          // Ahora comprobamos si thumbnailUrl no es la URL por defecto antes de mostrarla
+          const hatHtml = 
             <p><strong>Nombre:</strong> ${item.name}</p>
             <p><strong>Precio:</strong> ${item.price || "Gratis"}</p>
             <p><strong>Link:</strong> <a href="https://www.roblox.com/catalog/${item.id}" target="_blank">Ver en Roblox</a></p>
             <img src="${thumbnailUrl}" width="150">
-          `;
+          ;
           document.getElementById("hatInfo").innerHTML = hatHtml;
         } else {
           throw new Error('No se encontraron datos del sombrero');
